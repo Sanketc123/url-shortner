@@ -23,7 +23,6 @@ exports.getAnalyticsByAlias = catchAsync(async (req, res, next) => {
 
 exports.getAnalyticsByTopic = catchAsync(async (req, res, next) => {
     const { topic } = req.params;
-
     const urls = await UrlShortner.find({ topic });
 
     if (urls.length === 0) {
@@ -31,32 +30,40 @@ exports.getAnalyticsByTopic = catchAsync(async (req, res, next) => {
     }
 
     let totalClicks = 0;
-    let uniqueUsers = [];
+    let uniqueUsers = new Set();
     let clicksByDateMap = new Map(); // Store clicks per date
-
-    const urlsWithStats = [];
+    let urlsWithStats = [];
 
     for (let url of urls) {
         let analytics = await Analytics.findOne({ alias: url.customAlias });
 
         if (analytics) {
             totalClicks += analytics.totalClicks;
-            Object.keys(analytics.uniqueUsers).forEach(userId => {
-                uniqueUsers.add(userId);
-            });            
+            if (Array.isArray(analytics.uniqueUsers)) {
+                analytics.uniqueUsers.forEach(user => uniqueUsers.add(user));
+            } else if (analytics.uniqueUsers) {
+                uniqueUsers.add(analytics.uniqueUsers);
+            }        
+
             analytics.clicksByDate.forEach(({ date, clickCount }) => {
                 clicksByDateMap.set(date, (clicksByDateMap.get(date) || 0) + clickCount);
             });
 
+            let individualUniqueUsers = new Set();
+            if (Array.isArray(analytics.uniqueUsers)) {
+                analytics.uniqueUsers.forEach(user => individualUniqueUsers.add(user));
+            } else if (analytics.uniqueUsers) {
+                individualUniqueUsers.add(analytics.uniqueUsers);
+            }
+
             urlsWithStats.push({
                 shortUrl: url.shortUrl,
                 totalClicks: analytics.totalClicks,
-                uniqueUsers: analytics.uniqueUsers.length,
+                uniqueUsers: individualUniqueUsers.size,
             });
         }
     }
 
-    // Convert Map to an array of objects and sort by date (keeping only last 7 days)
     let clicksByDate = Array.from(clicksByDateMap.entries())
         .map(([date, clickCount]) => ({ date, clickCount }))
         .sort((a, b) => new Date(a.date) - new Date(b.date));
