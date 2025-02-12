@@ -1,0 +1,35 @@
+
+Api For Oauth Signup/login
+Paste the below api For Google Signup/Login
+'https://urlshortenapp.koyeb.app/auth/google' \
+
+
+Api for Create Short Url
+curl --location 'https://urlshortenapp.koyeb.app/api/shorten' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2FiNTAxZGI1MjRmOWQ3NTc4NTc0ZjMiLCJpYXQiOjE3MzkzNTU2MDcsImV4cCI6MTczOTM1OTIwN30.EfdWm_Ypv1299JX38JpMlZ77jn7z4Lb3yDLrArJbUJg' \
+--data '{
+  "longUrl": "https://www.geeksforgeeks.org/javascript-object-programming-examples/",
+  "customAlias": "hell",
+  "topic": "acquisition"
+}'
+
+
+Redirection Link
+https://urlshortenapp.koyeb.app/api/shorten/{alias}
+
+
+Get Analysis By alias
+curl --location 'https://urlshortenapp.koyeb.app/api/analytics/{alias}' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2FiNTAxZGI1MjRmOWQ3NTc4NTc0ZjMiLCJpYXQiOjE3MzkzNTU2MDcsImV4cCI6MTczOTM1OTIwN30.EfdWm_Ypv1299JX38JpMlZ77jn7z4Lb3yDLrArJbUJg'
+
+
+Get Analysis for topiccurl --location 'https://urlshortenapp.koyeb.app/api/analytics/topic/{topic}' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2FiNTAxZGI1MjRmOWQ3NTc4NTc0ZjMiLCJpYXQiOjE3MzkzNTU2MDcsImV4cCI6MTczOTM1OTIwN30.EfdWm_Ypv1299JX38JpMlZ77jn7z4Lb3yDLrArJbUJg'
+
+
+Get OverAll Analysis
+curl --location 'https://urlshortenapp.koyeb.app/api/analytics/overall' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2FiNTAxZGI1MjRmOWQ3NTc4NTc0ZjMiLCJpYXQiOjE3MzkzNDg4MTIsImV4cCI6MTczOTM1MjQxMn0.aIoa6p5W7vlQkKTJxBpamRNA-LpqgneKzBpCW8h34LY'
+
+

@@ -1,3 +1,4 @@
+const { getCache, setCache } = require('../utils/cache');
 const UrlShortner = require('./../models/urlShortnerModel')
 const Analytics = require("../models/urlAnalyticsModel");
 const catchAsync = require('./../utils/catchAsync');
@@ -62,14 +63,22 @@ exports.createShortUrl = catchAsync(async (req, res, next) => {
 
 exports.redirectShortUrl = catchAsync(async (req, res, next) => {
     const { alias } = req.params;
+
+    const cachedUrl = await getCache(alias);
+    if (cachedUrl) {
+        await trackClick(req);
+        return res.redirect(301, cachedUrl);
+    }
+
     const urlEntry = await UrlShortner.findOne({ shortUrl: alias });
 
     if (!urlEntry) {
         return next(new AppError("Short URL not found for this alias", 404));
     }
 
-    await trackClick(req);
+    await setCache(alias, urlEntry.longUrl, 600);
 
+    await trackClick(req);
     res.redirect(301, urlEntry.longUrl);
 });
 

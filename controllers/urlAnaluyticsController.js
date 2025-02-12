@@ -1,10 +1,7 @@
-const { getCachedData, setCachedData, } = require("../utils/cache")
 const Analytics = require("../models/urlAnalyticsModel");
 const UrlShortner = require('./../models/urlShortnerModel')
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-const mongoose = require("mongoose");
-
 
 exports.getAnalyticsByAlias = catchAsync(async (req, res, next) => {
     const { alias } = req.params;
@@ -77,14 +74,6 @@ exports.getAnalyticsByTopic = catchAsync(async (req, res, next) => {
 
 exports.getOverAllAnalytics = catchAsync(async (req, res, next) => {
     const userId = req.user.userId;
-
-    // Radis to get Cache data
-    const cacheKey = `overall_analytics_${userId}`;
-    const cachedData = await getCachedData(cacheKey);
-    if (cachedData) {
-        console.log("✅ Serving from cache");
-        return res.status(200).json({ status: "success", data: cachedData });
-    }
 
     // Fetch the data from UrlShortner collection based on userId
     const urls = await UrlShortner.find({ userId });
@@ -162,9 +151,6 @@ exports.getOverAllAnalytics = catchAsync(async (req, res, next) => {
         osType,
         deviceType,
     };
-
-    // Store in Redis cache for future requests (Expire in 10 minutes)
-    await setCachedData(cacheKey, responseData);
 
     res.status(200).json({ status: "success", data: responseData });
 
